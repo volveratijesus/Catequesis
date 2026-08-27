@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verdadero o Falso — Juego por Equipos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --rose:#c98a92;
+    --rose-deep:#a8636d;
+    --sage:#8a9a7e;
+    --sage-deep:#6b7c5f;
+    --cream:#faf6f1;
+    --cream-deep:#f0e8dd;
+    --gold:#c9a15a;
+    --ink:#3a332f;
+    --ink-soft:#6b6058;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:linear-gradient(160deg,var(--cream) 0%, var(--cream-deep) 100%);
+    font-family:'Lato',sans-serif;
+    color:var(--ink);
+    display:flex;
+    justify-content:center;
+    padding:24px 16px 60px;
+  }
+  .wrap{width:100%;max-width:640px;}
+  h1{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:700;
+    font-size:2.4rem;
+    text-align:center;
+    margin:4px 0 2px;
+    color:var(--ink);
+    letter-spacing:0.5px;
+  }
+  .sub{
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:0.9rem;
+    margin-bottom:20px;
+    letter-spacing:0.3px;
+  }
+
+  /* --- Setup screen --- */
+  .card{
+    background:#fff;
+    border-radius:18px;
+    padding:26px 22px;
+    box-shadow:0 10px 30px rgba(58,51,47,0.08);
+    border:1px solid rgba(201,161,90,0.25);
+  }
+  label{
+    display:block;
+    font-size:0.85rem;
+    font-weight:700;
+    color:var(--ink-soft);
+    margin-bottom:6px;
+    margin-top:16px;
+    text-transform:uppercase;
+    letter-spacing:0.8px;
+  }
+  label:first-of-type{margin-top:0;}
+  input[type=text], textarea{
+    width:100%;
+    padding:12px 14px;
+    border-radius:10px;
+    border:1.5px solid var(--cream-deep);
+    font-family:'Lato',sans-serif;
+    font-size:1rem;
+    background:var(--cream);
+    color:var(--ink);
+  }
+  input[type=text]:focus, textarea:focus{outline:none;border-color:var(--gold);}
+  textarea{min-height:140px;resize:vertical;line-height:1.5;}
+  .hint{font-size:0.78rem;color:var(--ink-soft);margin-top:6px;}
+
+  .btn{
+    display:inline-block;
+    border:none;
+    border-radius:999px;
+    padding:14px 28px;
+    font-family:'Lato',sans-serif;
+    font-weight:900;
+    font-size:0.95rem;
+    letter-spacing:0.5px;
+    cursor:pointer;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:active{transform:scale(0.96);}
+  .btn-primary{
+    background:var(--gold);
+    color:#fff;
+    width:100%;
+    margin-top:22px;
+    box-shadow:0 8px 18px rgba(201,161,90,0.35);
+  }
+  .btn-secondary{
+    background:transparent;
+    color:var(--ink-soft);
+    border:1.5px solid var(--cream-deep);
+    width:100%;
+    margin-top:10px;
+  }
+
+  /* --- Game screen --- */
+  #game{display:none;}
+  .scoreboard{
+    display:flex;
+    gap:12px;
+    margin-bottom:18px;
+  }
+  .team-box{
+    flex:1;
+    background:#fff;
+    border-radius:14px;
+    padding:14px 10px;
+    text-align:center;
+    border:2px solid transparent;
+    transition:all .3s ease;
+  }
+  .team-box.active{
+    border-color:var(--gold);
+    box-shadow:0 8px 20px rgba(201,161,90,0.25);
+    transform:translateY(-2px);
+  }
+  .team-name{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:700;
+    font-size:1.15rem;
+    margin-bottom:4px;
+  }
+  .team-box:nth-child(1) .team-name{color:var(--rose-deep);}
+  .team-box:nth-child(2) .team-name{color:var(--sage-deep);}
+  .team-score{
+    font-size:1.8rem;
+    font-weight:900;
+    font-family:'Lato',sans-serif;
+    color:var(--ink);
+  }
+  .turn-tag{
+    display:none;
+    font-size:0.68rem;
+    text-transform:uppercase;
+    letter-spacing:0.7px;
+    color:var(--gold);
+    font-weight:900;
+    margin-top:4px;
+  }
+  .team-box.active .turn-tag{display:block;}
+
+  .progress{
+    text-align:center;
+    font-size:0.82rem;
+    color:var(--ink-soft);
+    margin-bottom:10px;
+    letter-spacing:0.4px;
+  }
+
+  .question-card{
+    background:#fff;
+    border-radius:20px;
+    padding:34px 24px;
+    text-align:center;
+    box-shadow:0 12px 32px rgba(58,51,47,0.1);
+    border:1px solid rgba(201,161,90,0.25);
+    min-height:140px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .question-text{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:600;
+    font-size:1.5rem;
+    line-height:1.4;
+    color:var(--ink);
+  }
+
+  .answers{
+    display:flex;
+    gap:14px;
+    margin-top:22px;
+  }
+  .ans-btn{
+    flex:1;
+    padding:20px 10px;
+    border-radius:16px;
+    border:none;
+    font-family:'Lato',sans-serif;
+    font-weight:900;
+    font-size:1.1rem;
+    letter-spacing:0.5px;
+    color:#fff;
+    cursor:pointer;
+    transition:transform .12s ease, filter .12s ease;
+  }
+  .ans-btn:active{transform:scale(0.95);}
+  .ans-true{background:var(--sage-deep);}
+  .ans-false{background:var(--rose-deep);}
+  .ans-btn:disabled{opacity:0.55;cursor:default;}
+
+  .feedback{
+    margin-top:18px;
+    text-align:center;
+    font-weight:700;
+    font-size:1.05rem;
+    min-height:28px;
+    letter-spacing:0.3px;
+  }
+  .feedback.correct{color:var(--sage-deep);}
+  .feedback.incorrect{color:var(--rose-deep);}
+
+  .next-btn{
+    display:none;
+    margin:18px auto 0;
+  }
+
+  /* --- End screen --- */
+  #end{display:none;text-align:center;}
+  #end .card{padding:40px 24px;}
+  .trophy{font-size:3rem;margin-bottom:6px;}
+  .winner-name{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:700;
+    font-size:2rem;
+    margin:6px 0 2px;
+  }
+  .final-scores{
+    display:flex;
+    justify-content:center;
+    gap:26px;
+    margin:18px 0 4px;
+    color:var(--ink-soft);
+    font-size:0.95rem;
+  }
+
+  @media (max-width:400px){
+    h1{font-size:1.9rem;}
+    .question-text{font-size:1.25rem;}
+    .ans-btn{font-size:1rem;padding:16px 8px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Verdadero o Falso</h1>
+  <div class="sub">Juego por equipos con turnos</div>
+
+  <!-- SETUP -->
+  <div id="setup" class="card">
+    <label>Nombre del Equipo 1</label>
+    <input type="text" id="team1" placeholder="Equipo A" value="Equipo A">
+
+    <label>Nombre del Equipo 2</label>
+    <input type="text" id="team2" placeholder="Equipo B" value="Equipo B">
+
+    <label>Preguntas</label>
+    <textarea id="questionsInput"></textarea>
+    <div class="hint">Formato: una pregunta por línea, terminando en <b>|V</b> o <b>|F</b>. Ej: "Jesús nació en Belén|V". Ya viene con preguntas de ejemplo — podés borrarlas y poner las tuyas.</div>
+
+    <button class="btn btn-primary" onclick="startGame()">Comenzar juego</button>
+  </div>
+
+  <!-- GAME -->
+  <div id="game">
+    <div class="scoreboard">
+      <div class="team-box" id="box1">
+        <div class="team-name" id="name1Display"></div>
+        <div class="team-score" id="score1">0</div>
+        <div class="turn-tag">Turno actual</div>
+      </div>
+      <div class="team-box" id="box2">
+        <div class="team-name" id="name2Display"></div>
+        <div class="team-score" id="score2">0</div>
+        <div class="turn-tag">Turno actual</div>
+      </div>
+    </div>
+
+    <div class="progress" id="progress"></div>
+
+    <div class="question-card">
+      <div class="question-text" id="questionText"></div>
+    </div>
+
+    <div class="answers">
+      <button class="ans-btn ans-true" id="btnTrue" onclick="answer(true)">VERDADERO</button>
+      <button class="ans-btn ans-false" id="btnFalse" onclick="answer(false)">FALSO</button>
+    </div>
+
+    <div class="feedback" id="feedback"></div>
+
+    <button class="btn btn-primary next-btn" id="nextBtn" onclick="nextTurn()">Siguiente pregunta →</button>
+  </div>
+
+  <!-- END -->
+  <div id="end">
+    <div class="card">
+      <div class="trophy">🏆</div>
+      <div class="sub">¡Fin del juego!</div>
+      <div class="winner-name" id="winnerName"></div>
+      <div class="final-scores" id="finalScores"></div>
+      <button class="btn btn-primary" onclick="restart()">Jugar de nuevo</button>
+      <button class="btn btn-secondary" onclick="backToSetup()">Cambiar preguntas / equipos</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const sampleQuestions = [
+  "Hay un solo Dios|V",
+  "El Padre, el Hijo y el Espíritu Santo son tres dioses diferentes|F|Son tres Personas distintas, pero un solo Dios.",
+  "Jesús es el Hijo de Dios|V",
+  "Jesús es verdaderamente Dios|V",
+  "El Espíritu Santo es Dios|V",
+  "El Padre es Dios|V",
+  "El Padre, el Hijo y el Espíritu Santo son la misma Persona con tres disfraces diferentes|F|Son tres Personas realmente distintas.",
+  "El Padre es Jesús|F|El Padre y el Hijo son Personas distintas.",
+  "Jesús es el Espíritu Santo|F|El Hijo y el Espíritu Santo son Personas distintas.",
+  "La Santísima Trinidad significa un solo Dios en tres Personas|V",
+  "Cada Persona de la Trinidad es solamente una tercera parte de Dios|F|Cada Persona es plenamente Dios.",
+  "La Santísima Trinidad es un misterio de nuestra fe|V",
+  "Cuando la Iglesia dice “misterio” quiere decir que nadie sabe nada sobre Dios|F|Dios nos ha revelado cosas verdaderas sobre sí mismo, aunque no podamos comprenderlo completamente.",
+  "Podemos entender completamente cómo funciona la Santísima Trinidad|F|Es un misterio que supera nuestra inteligencia.",
+  "Dios quiso que nosotros pudiéramos conocerlo|V",
+  "Jesús nos reveló al Padre y nos habló del Espíritu Santo|V",
+  "En el Bautismo de Jesús aparecen el Padre, el Hijo y el Espíritu Santo|V",
+  "En el Bautismo de Jesús, Jesús representa al Hijo|V",
+  "En el Bautismo de Jesús, el Espíritu Santo descendió sobre Él como una paloma|V",
+  "El Espíritu Santo es literalmente una paloma|F|La paloma es un signo con el que se manifestó el Espíritu Santo.",
+  "En el Bautismo de Jesús se escuchó la voz del Padre desde el cielo|V",
+  "Jesús mandó bautizar en el nombre del Padre, del Hijo y del Espíritu Santo|V",
+  "Cuando nos persignamos, nombramos a la Santísima Trinidad|V",
+  "Cuando hacemos la señal de la cruz decimos “en los nombres del Padre, del Hijo y del Espíritu Santo”|F|Decimos “en el nombre”, porque hay un solo Dios.",
+  "El Padre creó el mundo sin el Hijo y sin el Espíritu Santo|F|La creación es obra del único Dios: Padre, Hijo y Espíritu Santo.",
+  "Dios Padre nos ama|V",
+  "Jesús vino al mundo para salvarnos|V",
+  "El Espíritu Santo nos ayuda a seguir a Jesús|V",
+  "El Espíritu Santo nos ayuda a rezar y a vivir como hijos de Dios|V",
+  "Dios necesitaba crear personas porque estaba solo|F|Dios no necesita nada; nos creó libremente por amor.",
+  "La Trinidad nos enseña que Dios es amor|V",
+  "El Padre existió primero y después creó a Jesús|F|El Hijo es eterno. Nunca hubo un momento en que el Hijo no existiera.",
+  "El Espíritu Santo empezó a existir en Pentecostés|F|El Espíritu Santo es eterno; en Pentecostés se manifestó de una manera especial y fue enviado sobre los discípulos.",
+  "Pentecostés fue el momento en que los apóstoles recibieron de manera especial al Espíritu Santo|V",
+  "El sol, su luz y su calor explican perfectamente la Santísima Trinidad|F|Es solamente una comparación que puede ayudarnos un poquito; ninguna comparación explica completamente a Dios.",
+  "Si no entendemos completamente la Trinidad, significa que no podemos creer en ella|F|Creemos porque Dios mismo nos la ha revelado.",
+  "La Santísima Trinidad es Padre, Hijo y Espíritu Santo|V",
+  "Son tres Personas distintas y un solo Dios|V",
+  "La señal de la cruz nos recuerda quién es nuestro Dios|V",
+  "La Santísima Trinidad es uno de los misterios centrales de la fe cristiana|V"
+];
+
+document.getElementById('questionsInput').value = sampleQuestions.join("\n");
+
+let questions = [];
+let teams = ["", ""];
+let scores = [0, 0];
+let currentTeam = 0;
+let currentIndex = 0;
+let answered = false;
+
+function parseQuestions(raw){
+  return raw.split("\n")
+    .map(l => l.trim())
+    .filter(l => l.length > 0)
+    .map(l => {
+      const parts = l.split("|");
+      const text = parts[0].trim();
+      const flag = (parts[1] || "").trim().toUpperCase();
+      const explanation = (parts[2] || "").trim();
+      return { text: text, answer: flag === "V", explanation: explanation };
+    })
+    .filter(q => q.text.length > 0);
+}
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startGame(){
+  const t1 = document.getElementById('team1').value.trim() || "Equipo A";
+  const t2 = document.getElementById('team2').value.trim() || "Equipo B";
+  const raw = document.getElementById('questionsInput').value;
+  const parsed = parseQuestions(raw);
+
+  if(parsed.length === 0){
+    alert("Agregá al menos una pregunta antes de comenzar.");
+    return;
+  }
+
+  teams = [t1, t2];
+  questions = shuffle(parsed);
+  scores = [0, 0];
+  currentTeam = 0;
+  currentIndex = 0;
+
+  document.getElementById('name1Display').textContent = teams[0];
+  document.getElementById('name2Display').textContent = teams[1];
+
+  document.getElementById('setup').style.display = 'none';
+  document.getElementById('end').style.display = 'none';
+  document.getElementById('game').style.display = 'block';
+
+  renderQuestion();
+}
+
+function renderQuestion(){
+  answered = false;
+  document.getElementById('feedback').textContent = "";
+  document.getElementById('feedback').className = "feedback";
+  document.getElementById('nextBtn').style.display = "none";
+  document.getElementById('btnTrue').disabled = false;
+  document.getElementById('btnFalse').disabled = false;
+
+  document.getElementById('box1').classList.toggle('active', currentTeam === 0);
+  document.getElementById('box2').classList.toggle('active', currentTeam === 1);
+
+  document.getElementById('score1').textContent = scores[0];
+  document.getElementById('score2').textContent = scores[1];
+
+  document.getElementById('progress').textContent =
+    `Pregunta ${currentIndex + 1} de ${questions.length} — Turno: ${teams[currentTeam]}`;
+
+  document.getElementById('questionText').textContent = questions[currentIndex].text;
+}
+
+function answer(userSaysTrue){
+  if(answered) return;
+  answered = true;
+
+  const correct = questions[currentIndex].answer === userSaysTrue;
+  document.getElementById('btnTrue').disabled = true;
+  document.getElementById('btnFalse').disabled = true;
+
+  const fb = document.getElementById('feedback');
+  if(correct){
+    scores[currentTeam]++;
+    fb.textContent = `¡Correcto! Punto para ${teams[currentTeam]}.`;
+    fb.className = "feedback correct";
+  } else {
+    const correctText = questions[currentIndex].answer ? "VERDADERO" : "FALSO";
+    const explanation = questions[currentIndex].explanation;
+    fb.textContent = explanation
+      ? `Incorrecto. La respuesta era ${correctText}. ${explanation}`
+      : `Incorrecto. La respuesta era ${correctText}.`;
+    fb.className = "feedback incorrect";
+  }
+
+  document.getElementById('score1').textContent = scores[0];
+  document.getElementById('score2').textContent = scores[1];
+  document.getElementById('nextBtn').style.display = "inline-block";
+}
+
+function nextTurn(){
+  currentIndex++;
+  currentTeam = currentTeam === 0 ? 1 : 0;
+
+  if(currentIndex >= questions.length){
+    showEnd();
+    return;
+  }
+  renderQuestion();
+}
+
+function showEnd(){
+  document.getElementById('game').style.display = 'none';
+  document.getElementById('end').style.display = 'block';
+
+  let winnerText;
+  if(scores[0] > scores[1]) winnerText = `¡Ganó ${teams[0]}!`;
+  else if(scores[1] > scores[0]) winnerText = `¡Ganó ${teams[1]}!`;
+  else winnerText = "¡Empate!";
+
+  document.getElementById('winnerName').textContent = winnerText;
+  document.getElementById('finalScores').innerHTML =
+    `<div>${teams[0]}: <b>${scores[0]}</b></div><div>${teams[1]}: <b>${scores[1]}</b></div>`;
+}
+
+function restart(){
+  scores = [0, 0];
+  currentTeam = 0;
+  currentIndex = 0;
+  questions = shuffle(questions);
+  document.getElementById('end').style.display = 'none';
+  document.getElementById('game').style.display = 'block';
+  renderQuestion();
+}
+
+function backToSetup(){
+  document.getElementById('end').style.display = 'none';
+  document.getElementById('game').style.display = 'none';
+  document.getElementById('setup').style.display = 'block';
+}
+</script>
+</body>
+</html>
