@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clase Niños — Catequesis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --rose:#c98a92;
+    --rose-deep:#a8636d;
+    --sage:#8a9a7e;
+    --sage-deep:#6b7c5f;
+    --cream:#faf6f1;
+    --cream-deep:#f0e8dd;
+    --gold:#c9a15a;
+    --ink:#3a332f;
+    --ink-soft:#6b6058;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:linear-gradient(160deg,var(--cream) 0%, var(--cream-deep) 100%);
+    font-family:'Lato',sans-serif;
+    color:var(--ink);
+  }
+  .topbar{
+    max-width:760px;
+    margin:0 auto;
+    padding:24px 20px 0;
+  }
+  .back-link{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:0.82rem;
+    font-weight:700;
+    color:var(--ink-soft);
+    text-decoration:none;
+    letter-spacing:0.3px;
+  }
+  .back-link:hover{color:var(--gold);}
+
+  .hero{
+    text-align:center;
+    padding:36px 20px 20px;
+  }
+  .eyebrow{
+    font-size:0.72rem;
+    letter-spacing:2.5px;
+    text-transform:uppercase;
+    color:var(--gold);
+    font-weight:700;
+    margin-bottom:10px;
+  }
+  h1{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:700;
+    font-size:clamp(2.2rem, 6vw, 3rem);
+    margin:0 0 10px;
+  }
+  .sub{
+    font-family:'Cormorant Garamond',serif;
+    font-style:italic;
+    font-weight:500;
+    font-size:1.1rem;
+    color:var(--ink-soft);
+    max-width:460px;
+    margin:0 auto;
+    line-height:1.5;
+  }
+  .cross-divider{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    margin:22px auto 0;
+    color:var(--gold);
+    max-width:220px;
+  }
+  .cross-divider::before, .cross-divider::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:linear-gradient(to right, transparent, var(--gold), transparent);
+  }
+
+  .wrap{
+    max-width:760px;
+    margin:0 auto;
+    padding:20px 20px 80px;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:18px;
+    margin-top:20px;
+  }
+  @media(min-width:640px){
+    .grid{grid-template-columns:1fr 1fr;}
+  }
+
+  .card{
+    background:#fff;
+    border-radius:18px;
+    padding:26px 24px;
+    box-shadow:0 10px 28px rgba(58,51,47,0.08);
+    border:1px solid rgba(201,161,90,0.22);
+    text-decoration:none;
+    color:var(--ink);
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 16px 34px rgba(58,51,47,0.13);
+  }
+  .card-icon{
+    font-size:1.6rem;
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    background:var(--cream);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .card-title{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:700;
+    font-size:1.35rem;
+  }
+  .card-desc{
+    font-size:0.92rem;
+    color:var(--ink-soft);
+    line-height:1.5;
+  }
+  .card-tag{
+    margin-top:auto;
+    font-size:0.72rem;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    font-weight:900;
+    color:var(--gold);
+  }
+
+  .card.placeholder{
+    background:transparent;
+    border:1.5px dashed rgba(201,161,90,0.4);
+    box-shadow:none;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    color:var(--ink-soft);
+    font-family:'Cormorant Garamond',serif;
+    font-style:italic;
+    font-size:1rem;
+    min-height:120px;
+  }
+  .card.placeholder:hover{transform:none;box-shadow:none;}
+
+  footer{
+    text-align:center;
+    padding:30px 20px 50px;
+    font-size:0.8rem;
+    color:var(--ink-soft);
+    font-style:italic;
+    font-family:'Cormorant Garamond',serif;
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a class="back-link" href="index.html">← Inicio</a>
+  </div>
+
+  <div class="hero">
+    <div class="eyebrow">Clase Niños</div>
+    <h1>Temas de la clase</h1>
+    <p class="sub">Elegí el tema que estás dando para acceder a su juego o dinámica.</p>
+    <div class="cross-divider">✝</div>
+  </div>
+
+  <div class="wrap">
+    <div class="grid">
+
+      <a class="card" href="juego-verdadero-falso.html">
+        <div class="card-icon">🕊️</div>
+        <div class="card-title">Santísima Trinidad</div>
+        <div class="card-desc">Juego de Verdadero o Falso por equipos para repasar quién es el Padre, el Hijo y el Espíritu Santo.</div>
+        <div class="card-tag">Jugar ahora →</div>
+      </a>
+
+      <div class="card placeholder">
+        Próximamente más temas aquí ✨
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    "Señor, que mis planes quepan en los Tuyos."
+  </footer>
+
+</body>
+</html>
